@@ -3,8 +3,8 @@
  */
 const startButton = document.querySelector(".js-start-button");
 const statusSpan = document.querySelector(".status"); // Use querySelector() to get the status element
-const heading = document.querySelector("h1"); // Use querySelector() to get the heading element
-const padContainer = document.querySelector("h1"); // Use querySelector() to get the heading element
+const heading = document.querySelector(".heading"); // Use querySelector() to get the heading element
+const padContainer = document.querySelector(".js-pad-container"); // Use querySelector() to get the heading element
 /**
  * VARIABLES
  */
@@ -248,7 +248,9 @@ function playComputerTurn() {
 	statusSpan.innerText = "The computer's turn...";
 	heading.innerText = `Round ${roundCount} of ${maxRoundCount}`;
 
-	computerSequence.push(/*random color*/);
+	const randomColor = getRandomItem(pads).color;
+
+	computerSequence.push(randomColor);
 
 	activatePads(computerSequence);
 
@@ -263,7 +265,8 @@ function playComputerTurn() {
  * 2. Display a status message showing the player how many presses are left in the round
  */
 function playHumanTurn() {
-	// TODO: Write your code here.
+	padContainer.classList.remove("unclickable");
+	checkPress();
 }
 
 /**
@@ -289,7 +292,20 @@ function playHumanTurn() {
  *
  */
 function checkPress(color) {
-	// TODO: Write your code here.
+	playerSequence.push(color);
+	const index = playerSequence.findIndex(color);
+	const remainingPresses = computerSequence.length - playerSequence.length;
+
+	statusSpan.innerText = `There are ${remainingPresses} presses left`;
+
+	if (computerSequence[index] !== playerSequence[index]) {
+		resetGame();
+		throw "Wrong color pressed! Restart!";
+	}
+
+	if (remainingPresses === 0) {
+		checkRound();
+	}
 }
 
 /**
@@ -308,7 +324,10 @@ function checkPress(color) {
  */
 
 function checkRound() {
-	// TODO: Write your code here.
+	if (playerSequence.length === maxRoundCount) {
+		resetGame();
+		throw "You won! Congratulations!";
+	}
 }
 
 /**
