@@ -2,9 +2,9 @@
  * DOM SELECTORS
  */
 const startButton = document.querySelector(".js-start-button");
-const statusSpan = document.querySelector(".status"); // Use querySelector() to get the status element
-const heading = document.querySelector(".heading"); // Use querySelector() to get the heading element
-const padContainer = document.querySelector(".js-pad-container"); // Use querySelector() to get the heading element
+const statusSpan = document.querySelector(".js-status");
+const heading = document.querySelector(".js-heading");
+const padContainer = document.querySelector(".js-pad-container");
 /**
  * VARIABLES
  */
@@ -42,8 +42,28 @@ const pads = [
  * EVENT LISTENERS
  */
 
-padContainer.addEventListener("click", padHandler());
-startButton.addEventListener("click", startButtonHandler());
+padContainer.addEventListener("click", padHandler);
+startButton.addEventListener("click", startButtonHandler);
+
+/*
+ * Recursive level calculator
+ * I wanted setLevel() to not always default to 1.
+ */
+function levelCalculator() {
+	const difficulty = parseInt(
+		prompt("Input your difficulty level, 1-4:", "1")
+	);
+
+	let level = setLevel(difficulty);
+
+	while (typeof level === "string") {
+		alert(level);
+		levelCalculator();
+	}
+
+	maxRoundCount = level;
+}
+
 /**
  * EVENT HANDLERS
  */
@@ -62,8 +82,11 @@ startButton.addEventListener("click", startButtonHandler());
  * 5. Call `playComputerTurn()` to start the game with the computer going first.
  *
  */
+
 function startButtonHandler() {
-	setLevel();
+	startButton.classList.add("hidden");
+	// setLevel() called through levelCalculator()
+	levelCalculator();
 
 	roundCount += 1;
 
@@ -140,7 +163,7 @@ function setLevel(level = 1) {
 			case 4:
 				return 31;
 		}
-	} else throw "Please enter level 1, 2, 3, or 4";
+	} else return "Please enter level 1, 2, 3, or 4";
 }
 
 /**
@@ -190,11 +213,11 @@ function setText(element, text) {
 function activatePad(color) {
 	const pad = pads.find((pad) => pad.color === color);
 
-	pad.classList.add("activated");
+	pad.selector.classList.add("activated");
 	pad.sound.play();
 
 	setTimeout(() => {
-		pad.classList.remove("activated");
+		pad.selector.classList.remove("activated");
 	}, 500);
 }
 
@@ -216,7 +239,7 @@ function activatePads(sequence) {
 	let index = 0;
 
 	sequence.forEach(() => {
-		setTimeout(activatePad(), (index + 1) * 600);
+		setTimeout(activatePad(sequence[index]), (index + 1) * 600);
 	});
 }
 
@@ -245,12 +268,14 @@ function activatePads(sequence) {
  */
 function playComputerTurn() {
 	padContainer.classList.add("unclickable");
-	statusSpan.innerText = "The computer's turn...";
-	heading.innerText = `Round ${roundCount} of ${maxRoundCount}`;
+	setText(statusSpan, "The computer's turn...");
+	setText(heading, `Round ${roundCount} of ${maxRoundCount}`);
 
 	const randomColor = getRandomItem(pads).color;
 
-	computerSequence.push(randomColor);
+	computerSequence.forEach(() => {
+		computerSequence.push(randomColor);
+	});
 
 	activatePads(computerSequence);
 
@@ -266,7 +291,7 @@ function playComputerTurn() {
  */
 function playHumanTurn() {
 	padContainer.classList.remove("unclickable");
-	checkPress();
+	setText(statusSpan, "Your turn!");
 }
 
 /**
@@ -293,14 +318,14 @@ function playHumanTurn() {
  */
 function checkPress(color) {
 	playerSequence.push(color);
-	const index = playerSequence.findIndex(color);
+	const index = playerSequence.findIndex(() => playerSequence.length - 1);
 	const remainingPresses = computerSequence.length - playerSequence.length;
 
-	statusSpan.innerText = `There are ${remainingPresses} presses left`;
+	setText(statusSpan, `There are ${remainingPresses} presses left`);
 
 	if (computerSequence[index] !== playerSequence[index]) {
 		resetGame();
-		throw "Wrong color pressed! Restart!";
+		alert("Wrong color pressed! Restart!");
 	}
 
 	if (remainingPresses === 0) {
@@ -326,7 +351,12 @@ function checkPress(color) {
 function checkRound() {
 	if (playerSequence.length === maxRoundCount) {
 		resetGame();
-		throw "You won! Congratulations!";
+		alert("You won! Congratulations!");
+	} else {
+		roundCount++;
+		setText(statusSpan, "Nice! Keep Going!");
+
+		setTimeout(playComputerTurn, 1000);
 	}
 }
 
