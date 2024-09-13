@@ -56,12 +56,12 @@ function levelCalculator() {
 
 	let level = setLevel(difficulty);
 
-	while (typeof level === "string") {
+	if (typeof level !== "number") {
 		alert(level);
 		levelCalculator();
+	} else if (typeof level === "number") {
+		maxRoundCount = level;
 	}
-
-	maxRoundCount = level;
 }
 
 /**
@@ -73,7 +73,7 @@ function levelCalculator() {
  *
  * 1. Call setLevel() to set the level of the game
  *
- * 2. Increment the roundCount from 0 to 1
+ * 2. Increment the roundCount from 0 to 1 
  *
  * 3. Hide the start button by adding the `.hidden` class to the start button
  *
@@ -88,7 +88,7 @@ function startButtonHandler() {
 	// setLevel() called through levelCalculator()
 	levelCalculator();
 
-	roundCount += 1;
+	roundCount = 1;
 
 	statusSpan.classList.remove("hidden");
 
@@ -272,10 +272,9 @@ function playComputerTurn() {
 	setText(heading, `Round ${roundCount} of ${maxRoundCount}`);
 
 	const randomColor = getRandomItem(pads).color;
-
-	computerSequence.forEach(() => {
-		computerSequence.push(randomColor);
-	});
+	console.log(randomColor);
+	
+	computerSequence.push(randomColor);
 
 	activatePads(computerSequence);
 
@@ -318,14 +317,14 @@ function playHumanTurn() {
  */
 function checkPress(color) {
 	playerSequence.push(color);
-	const index = playerSequence.findIndex(() => playerSequence.length - 1);
+	const index = playerSequence.length -1;
 	const remainingPresses = computerSequence.length - playerSequence.length;
+	console.log(index, computerSequence, playerSequence)
 
 	setText(statusSpan, `There are ${remainingPresses} presses left`);
 
 	if (computerSequence[index] !== playerSequence[index]) {
-		resetGame();
-		alert("Wrong color pressed! Restart!");
+		resetGame("Wrong color pressed! Restart!");
 	}
 
 	if (remainingPresses === 0) {
@@ -347,11 +346,9 @@ function checkPress(color) {
  * all because it will get overwritten.
  *
  */
-
 function checkRound() {
 	if (playerSequence.length === maxRoundCount) {
-		resetGame();
-		alert("You won! Congratulations!");
+		resetGame("You won! Congratulations!");
 	} else {
 		roundCount++;
 		setText(statusSpan, "Nice! Keep Going!");
