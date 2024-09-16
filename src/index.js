@@ -236,10 +236,10 @@ function activatePad(color) {
  */
 
 function activatePads(sequence) {
-	sequence.forEach((color, i) => {
+	sequence.forEach((color, index) => {
 		setTimeout(() => {
 			activatePad(color);
-		}, (i + 1) * 600);
+		}, (index + 1) * 600);
 	});
 }
 
