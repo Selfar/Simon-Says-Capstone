@@ -73,7 +73,7 @@ function levelCalculator() {
  *
  * 1. Call setLevel() to set the level of the game
  *
- * 2. Increment the roundCount from 0 to 1 
+ * 2. Increment the roundCount from 0 to 1
  *
  * 3. Hide the start button by adding the `.hidden` class to the start button
  *
@@ -236,10 +236,10 @@ function activatePad(color) {
  */
 
 function activatePads(sequence) {
-	let index = 0;
-
-	sequence.forEach(() => {
-		setTimeout(activatePad(sequence[index]), (index + 1) * 600);
+	sequence.forEach((color, i) => {
+		setTimeout(() => {
+			activatePad(color);
+		}, (i + 1) * 600);
 	});
 }
 
@@ -273,7 +273,7 @@ function playComputerTurn() {
 
 	const randomColor = getRandomItem(pads).color;
 	console.log(randomColor);
-	
+
 	computerSequence.push(randomColor);
 
 	activatePads(computerSequence);
@@ -289,6 +289,7 @@ function playComputerTurn() {
  * 2. Display a status message showing the player how many presses are left in the round
  */
 function playHumanTurn() {
+	playerSequence = [];
 	padContainer.classList.remove("unclickable");
 	setText(statusSpan, "Your turn!");
 }
@@ -317,9 +318,9 @@ function playHumanTurn() {
  */
 function checkPress(color) {
 	playerSequence.push(color);
-	const index = playerSequence.length -1;
+	const index = playerSequence.length - 1;
 	const remainingPresses = computerSequence.length - playerSequence.length;
-	console.log(index, computerSequence, playerSequence)
+	console.log(index, computerSequence, playerSequence);
 
 	setText(statusSpan, `There are ${remainingPresses} presses left`);
 
