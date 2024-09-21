@@ -373,7 +373,7 @@ function resetGame(text) {
 	roundCount = [];
 
 	alert(text);
-	setText(heading, "Simon Says");
+	setText(heading, "Freddy Says");
 
 	startButton.classList.remove("hidden");
 	statusSpan.classList.add("hidden");
